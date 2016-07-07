@@ -1,0 +1,61 @@
+<!--
+  Generated template for the HomeFormPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar primary>
+    <ion-title>home-form</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="homeForm">
+    <ion-item-group>
+      <ion-item-divider light>Details</ion-item-divider>
+      <ion-item>
+        <ion-label floating primary>Address</ion-label>
+        <ion-input type="text" #addressLine1 formControlName="addressLine1" (change)="elementChanged(addressLine1)"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating primary>City</ion-label>
+        <ion-input type="text" #city formControlName="city" (change)="elementChanged(city)"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating primary>State</ion-label>
+        <ion-select #state formControlName="state" (change)="elementChanged(state)">
+          <ion-option *ngFor="let s of allStates" value="{{ s.Identifier }}">{{ s.Name }}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label floating primary>Zip</ion-label>
+        <ion-input type="number" #zip formControlName="zip" (change)="elementChanged(zip)"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="!homeForm.controls.zip.valid  && (zipChanged || submitAttempt)">
+        <p>Please enter a zipcode.</p>
+      </ion-item>
+
+      <ion-item-divider light>Scorecard</ion-item-divider>
+    </ion-item-group>
+    <div text-center style="padding-top: 10px;">
+      <button [disabled]="!homeForm.valid" (click)="saveHome()">Save</button>
+    </div>
+  </form>
+  <!--<form (ngSubmit)="onSubmit()" #homeForm="ngForm">
+    <ion-list>
+      <ion-item>
+        <ion-label floating primary>Address</ion-label>
+        <ion-input type="text" [(ngModel)]="houseListing.AddressLine1" ngControl="addressLine1"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating primary>City</ion-label>
+        <ion-input type="text" [(ngModel)]="houseListing.City" ngControl="city"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label floating primary>Zip</ion-label>
+        <ion-input type="text" [(ngModel)]="houseListing.Zip" ngControl="zip" pattern="[0-9]{5}"></ion-input>
+      </ion-item>
+    </ion-list>
+  </form>-->
+</ion-content>

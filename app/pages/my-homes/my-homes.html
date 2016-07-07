@@ -1,0 +1,37 @@
+<!--
+  Generated template for the MyHomesPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar primary>
+    <ion-title>My Homes</ion-title>
+    <ion-buttons end>
+      <button (click)="addClick()">
+        <ion-icon name="add" primary></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="currentUser">
+    <button ion-item *ngFor="let houseListing of currentUser.HouseListings" (click)="houseListingClick(houseListing)">
+      {{houseListing.AddressLine1}} {{houseListing.City}} {{houseListing.State}}
+      <ion-icon name="ios-arrow-forward" item-right></ion-icon>
+      <!--<ion-row>
+        <ion-col width-20 style="padding-top: 0; padding-bottom: 0;">
+          <span primary style="font-size: 2em;">{{round.Score}}</span>
+        </ion-col>
+        <ion-col width-80 style="padding-top: 0; padding-bottom: 0;">
+          <h3>
+            {{round.RatingAndSlope.GolfCourse.Name}}
+          </h3>
+          <p>{{round.Date | date: 'dd/MM/yyyy'}}</p>
+        </ion-col>
+      </ion-row>-->
+    </button>
+  </ion-list>
+</ion-content>
