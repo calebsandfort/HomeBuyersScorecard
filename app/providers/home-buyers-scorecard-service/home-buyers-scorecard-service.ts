@@ -23,7 +23,7 @@ export class HomeBuyersScorecardService {
   //<editor-fold desc="Constructor">
   constructor() {
     //let serviceName = "http://guerillalogisticsapi.azurewebsites.net/breeze/GolfApp";
-    let serviceName = "http://dev-csandfort.gwi.com/GuerillaLogisticsApi/breeze/HomeBuyersScorecardApp";
+    let serviceName = "http://10.16.1.142/GuerillaLogisticsApi/breeze/HomeBuyersScorecardApp";
     this._manager = new breeze.EntityManager(serviceName);
     this.metadataSet = false;
 

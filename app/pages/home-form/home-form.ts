@@ -3,7 +3,7 @@ import { NavController, NavParams } from 'ionic-angular';
 import {HouseListing} from "../../models/houseListing";
 import { REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
 import {State, STATES} from '../../models/state';
-import {StateValidator} from '../../validators/state';
+import {MyValidators} from '../../validators/my-validators';
 
 /*
   Generated class for the HomeFormPage page.
@@ -16,6 +16,8 @@ import {StateValidator} from '../../validators/state';
   directives: [REACTIVE_FORM_DIRECTIVES]
 })
 export class HomeFormPage implements OnInit {
+  activeSegment: string = "details";
+  isAndroid: boolean = true;
   houseListing: HouseListing;
   allStates: State[] = STATES;
 
@@ -43,19 +45,24 @@ export class HomeFormPage implements OnInit {
     this.homeForm = this.formBuilder.group({
       addressLine1: [this.houseListing.AddressLine1, Validators.compose([Validators.maxLength(50), Validators.required])],
       city: [this.houseListing.City, Validators.compose([Validators.maxLength(50), Validators.required])],
-      state: [this.houseListing.StateInt, Validators.compose([StateValidator.noneSelected])],
-      zip: [this.houseListing.Zip, Validators.compose([Validators.pattern('[0-9]{5}'), Validators.maxLength(5), Validators.required, StateValidator.noneSelected])]
+      state: [this.houseListing.StateInt, Validators.compose([MyValidators.noneSelected])],
+      zip: [this.houseListing.Zip, Validators.compose([Validators.pattern('[0-9]{5}'), Validators.maxLength(5), Validators.required])],
+      price: [this.houseListing.Price, Validators.compose([Validators.required, MyValidators.isPositiveNumber])],
+      bedrooms: [this.houseListing.Bedrooms, Validators.compose([Validators.required])],
+      bathrooms: [this.houseListing.Bathrooms, Validators.compose([Validators.required])],
+      squareFootage: [this.houseListing.SquareFootage, Validators.compose([Validators.required])],
+      neighborhood: [this.houseListing.Neighborhood],
+      schools: [this.houseListing.Schools],
+      layout: [this.houseListing.Layout],
+      yard: [this.houseListing.Yard],
+      moveInReady: [this.houseListing.MoveInReady],
+      gutFeeling: [this.houseListing.GutFeeling]
     });
-  }
-
-  elementChanged(input) {
-    let field = input.inputControl.name;
-    this[field + "Changed"] = true;
   }
 
   saveHome() {
     this.submitAttempt = true;
 
-    
+    console.log(this.homeForm);
   }
 }

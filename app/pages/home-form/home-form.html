@@ -8,37 +8,120 @@
   <ion-navbar primary>
     <ion-title>home-form</ion-title>
   </ion-navbar>
+
+  <ion-toolbar [attr.light]="isAndroid ? '' : null" no-border-top>
+    <ion-segment [(ngModel)]="activeSegment">
+      <ion-segment-button value="details">
+        Details
+      </ion-segment-button>
+      <ion-segment-button value="scorecard">
+        Scorecard
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form [formGroup]="homeForm">
-    <ion-item-group>
-      <ion-item-divider light>Details</ion-item-divider>
-      <ion-item>
-        <ion-label floating primary>Address</ion-label>
-        <ion-input type="text" #addressLine1 formControlName="addressLine1" (change)="elementChanged(addressLine1)"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label floating primary>City</ion-label>
-        <ion-input type="text" #city formControlName="city" (change)="elementChanged(city)"></ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label floating primary>State</ion-label>
-        <ion-select #state formControlName="state" (change)="elementChanged(state)">
-          <ion-option *ngFor="let s of allStates" value="{{ s.Identifier }}">{{ s.Name }}</ion-option>
-        </ion-select>
-      </ion-item>
-      <ion-item>
-        <ion-label floating primary>Zip</ion-label>
-        <ion-input type="number" #zip formControlName="zip" (change)="elementChanged(zip)"></ion-input>
-      </ion-item>
-      <ion-item *ngIf="!homeForm.controls.zip.valid  && (zipChanged || submitAttempt)">
-        <p>Please enter a zipcode.</p>
-      </ion-item>
-
-      <ion-item-divider light>Scorecard</ion-item-divider>
-    </ion-item-group>
-    <div text-center style="padding-top: 10px;">
+    <div [ngSwitch]="activeSegment">
+      <ion-item-group *ngSwitchCase="'details'">
+        <ion-item>
+          <ion-label floating primary>Address</ion-label>
+          <ion-input type="text" #addressLine1 formControlName="addressLine1"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>City</ion-label>
+          <ion-input type="text" #city formControlName="city"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>State</ion-label>
+          <ion-select #state formControlName="state">
+            <ion-option *ngFor="let s of allStates" value="{{ s.Identifier }}">{{ s.Name }}</ion-option>
+          </ion-select>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>Zip</ion-label>
+          <ion-input type="number" #zip formControlName="zip"></ion-input>
+        </ion-item>
+        <ion-item *ngIf="!homeForm.controls.zip.valid  && (!homeForm.controls.zip.pristine || submitAttempt)">
+          <p>Please enter a zipcode.</p>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>Price</ion-label>
+          <ion-input type="number" #price formControlName="price"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>Bedrooms</ion-label>
+          <ion-input type="number" #bedrooms formControlName="bedrooms" step="0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>Bathrooms</ion-label>
+          <ion-input type="number" #bathrooms formControlName="bathrooms" step=".5"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>Square Footage</ion-label>
+          <ion-input type="number" #squareFootage formControlName="squareFootage" step="0"></ion-input>
+        </ion-item>
+      </ion-item-group>
+      <ion-item-group *ngSwitchCase="'scorecard'">
+        <ion-item>
+          <ion-label stacked primary>Neighborhood 
+            <ion-badge *ngIf="homeForm.controls.neighborhood" style="float: right;" favorite>{{homeForm.controls.neighborhood.value}}</ion-badge>
+          </ion-label>
+          <ion-range #neighborhood formControlName="neighborhood" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
+            <ion-icon range-left small favorite name="heart-outline"></ion-icon>
+            <ion-icon range-right favorite name="heart"></ion-icon>
+            <!--<ion-badge *ngIf="homeForm.controls.neighborhood" range-right favorite>{{homeForm.controls.neighborhood.value}}</ion-badge>-->
+          </ion-range>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked primary>Schools 
+            <ion-badge *ngIf="homeForm.controls.schools" style="float: right;" favorite>{{homeForm.controls.schools.value}}</ion-badge>
+          </ion-label>
+          <ion-range #schools formControlName="schools" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
+            <ion-icon range-left small favorite name="heart-outline"></ion-icon>
+            <ion-icon range-right favorite name="heart"></ion-icon>
+          </ion-range>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked primary>Layout 
+            <ion-badge *ngIf="homeForm.controls.layout" style="float: right;" favorite>{{homeForm.controls.layout.value}}</ion-badge>
+          </ion-label>
+          <ion-range #layout formControlName="layout" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
+            <ion-icon range-left small favorite name="heart-outline"></ion-icon>
+            <ion-icon range-right favorite name="heart"></ion-icon>
+          </ion-range>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked primary>Yard 
+            <ion-badge *ngIf="homeForm.controls.yard" style="float: right;" favorite>{{homeForm.controls.yard.value}}</ion-badge>
+          </ion-label>
+          <ion-range #yard formControlName="yard" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
+            <ion-icon range-left small favorite name="heart-outline"></ion-icon>
+            <ion-icon range-right favorite name="heart"></ion-icon>
+          </ion-range>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked primary>Move in Ready 
+            <ion-badge *ngIf="homeForm.controls.moveInReady" style="float: right;" favorite>{{homeForm.controls.moveInReady.value}}</ion-badge>
+          </ion-label>
+          <ion-range #moveInReady formControlName="moveInReady" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
+            <ion-icon range-left small favorite name="heart-outline"></ion-icon>
+            <ion-icon range-right favorite name="heart"></ion-icon>
+          </ion-range>
+        </ion-item>
+        <ion-item>
+          <ion-label stacked primary>Gut Feeling 
+            <ion-badge *ngIf="homeForm.controls.gutFeeling" style="float: right;" favorite>{{homeForm.controls.gutFeeling.value}}</ion-badge>
+          </ion-label>
+          <ion-range #gutFeeling formControlName="gutFeeling" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
+            <ion-icon range-left small favorite name="heart-outline"></ion-icon>
+            <ion-icon range-right favorite name="heart"></ion-icon>
+          </ion-range>
+        </ion-item>
+      </ion-item-group>
+    </div>
+    <div text-center style="padding-top: 5px; padding-bottom: 5px;">
       <button [disabled]="!homeForm.valid" (click)="saveHome()">Save</button>
     </div>
   </form>

@@ -8,6 +8,17 @@ export class HouseListing {
     public State:string;
     public StateInt:number;
     public Zip:number;
+    public Price:number;
+    public Bedrooms:number;
+    public Bathrooms:number;
+    public SquareFootage:number;
+    
+    public Neighborhood:number;
+    public Schools:number;
+    public Layout:number;
+    public Yard:number;
+    public MoveInReady:number;
+    public GutFeeling:number;
 
     public UserIdentifier:number;
 
