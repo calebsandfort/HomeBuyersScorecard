@@ -39,6 +39,7 @@ export class HomeFormPage implements OnInit {
       this.houseListing = new HouseListing();
     }
 
+
     this.homeForm = this.formBuilder.group({
       addressLine1: [this.houseListing.AddressLine1, Validators.compose([Validators.maxLength(50), Validators.required])],
       city: [this.houseListing.City, Validators.compose([Validators.maxLength(50), Validators.required])],
