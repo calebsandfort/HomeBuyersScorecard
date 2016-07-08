@@ -1,8 +1,11 @@
 import {Injectable, EventEmitter} from '@angular/core';
 import {Q} from '../../q';
 import {User} from "../../models/user";
+import {RedFinResult} from "../../models/redFinResult";
 import {HouseListing} from "../../models/houseListing";
 import {Device} from 'ionic-native';
+import { Http, Response } from '@angular/http';
+import 'rxjs/Rx';
 
 declare var breeze: any;
 
@@ -11,17 +14,17 @@ breeze.config.setQ(Q);
 @Injectable()
 export class HomeBuyersScorecardService {
   //<editor-fold desc="Properties">
-  private _manager:any; // no type def for EM yet
-  private _store:any;
-  private currentUser:User;
-  private metadataSet:boolean;
+  private _manager: any; // no type def for EM yet
+  private _store: any;
+  private currentUser: User;
+  private metadataSet: boolean;
   //</editor-fold>
 
   public currentUserSet$: EventEmitter<User>;
   public currentUserError$: EventEmitter<string>;
 
   //<editor-fold desc="Constructor">
-  constructor() {
+  constructor(private http: Http) {
     //let serviceName = "http://guerillalogisticsapi.azurewebsites.net/breeze/GolfApp";
     let serviceName = "http://10.16.1.142/GuerillaLogisticsApi/breeze/HomeBuyersScorecardApp";
     this._manager = new breeze.EntityManager(serviceName);
@@ -29,8 +32,12 @@ export class HomeBuyersScorecardService {
 
     this._store = this._manager.metadataStore;
 
-    this._store.registerEntityTypeCtor('HouseListing', function(){
+    this._store.registerEntityTypeCtor('HouseListing', function () {
       this.StateInt = 0;
+    });
+
+    this._store.registerEntityTypeCtor('HomeBuyersScorecardUsers', function () {
+      this.DefaultStateInt = 0;
     });
 
     this.currentUserSet$ = new EventEmitter<User>();
@@ -38,13 +45,31 @@ export class HomeBuyersScorecardService {
   }
   //</editor-fold>
 
+  getDetailsFromRedFinByMlsNumber(): Promise<HouseListing> {
+    return this.http.get("http://dev-csandfort.gwi.com/GuerillaLogisticsApi/api/HouseListingLookup/GetByMls?city=Vancouver&state=47&mls=16233200")
+      .toPromise()
+      .then(this.extractData)
+      .catch(this.handleError);
+  }
+
+  private extractData(res: Response) {
+    let body = res.json();
+    return body || {};
+  }
+
+  private handleError(error: any) {
+    let errMsg = (error.message) ? error.message :
+      error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+    return Promise.reject(errMsg);
+  }
+
   //<editor-fold desc="fetchMetadata()">
-  fetchMetadata(){
+  fetchMetadata() {
     var that = this;
     return this._manager.fetchMetadata()
-        .then(function () {
-          that.metadataSet = true;
-        }).catch(failed);
+      .then(function () {
+        that.metadataSet = true;
+      }).catch(failed);
 
     function failed(error) {
       var msg = "Query failed: " + error.message;
@@ -56,13 +81,13 @@ export class HomeBuyersScorecardService {
 
   //<editor-fold desc="Users">
   //<editor-fold desc="setCurrentUser()">
-  setCurrentUser(forceRefresh:boolean){
+  setCurrentUser(forceRefresh: boolean) {
     var findPredicate = this.getUserFindPredicate();
     let deviceId: string = Device.device.uuid;
     var that = this;
     let userFromCatch = (!forceRefresh && this.metadataSet) ? that.getUserFromCatch() : null;
 
-    if(userFromCatch){
+    if (userFromCatch) {
 
       return new Promise(function (resolve) {
         that.currentUser = userFromCatch;
@@ -72,32 +97,32 @@ export class HomeBuyersScorecardService {
     }
     else {
       return breeze.EntityQuery
-          .from('HomeBuyersScorecardUsers')
-          .expand('HouseListings')
-          .where(findPredicate)
-          .take(1)
-          .using(this._manager).execute()
-          .then(success).catch(failed);
+        .from('HomeBuyersScorecardUsers')
+        .expand('HouseListings')
+        .where(findPredicate)
+        .take(1)
+        .using(this._manager).execute()
+        .then(success).catch(failed);
     }
 
     function success(data) {
       let user = data.results.length == 1 ? data.results[0] : null;
 
-      if(user == null){
+      if (user == null) {
         that.currentUserError$.emit("no user found: " + deviceId);
 
         that.createUser(deviceId)
-            .then(() => {
-              let createdUserFromCatch = that.getUserFromCatch();
+          .then(() => {
+            let createdUserFromCatch = that.getUserFromCatch();
 
-              that.currentUser = createdUserFromCatch;
-              that.currentUserSet$.emit(that.currentUser);
-            })
-            .catch((emsg:string) => {
-              that.currentUserError$.emit(emsg);
-            });
+            that.currentUser = createdUserFromCatch;
+            that.currentUserSet$.emit(that.currentUser);
+          })
+          .catch((emsg: string) => {
+            that.currentUserError$.emit(emsg);
+          });
       }
-      else{
+      else {
         that.currentUser = user;
         that.currentUserSet$.emit(that.currentUser);
       }
@@ -111,27 +136,27 @@ export class HomeBuyersScorecardService {
     }
   }
 
-  getUserFindPredicate(){
+  getUserFindPredicate() {
     var findPredicate;
     let deviceId: string = Device.device.uuid;
 
-    if(typeof (deviceId) == "undefined"){
-      findPredicate = new breeze.Predicate("Identifier", breeze.FilterQueryOp.Equals, 1);
+    if (typeof (deviceId) == "undefined") {
+      findPredicate = new breeze.Predicate("DeviceId", breeze.FilterQueryOp.Equals, "95f85a94316023f7");
     }
-    else{
+    else {
       findPredicate = new breeze.Predicate("DeviceId", breeze.FilterQueryOp.Equals, deviceId);
     }
 
     return findPredicate;
   }
 
-  getUserFromCatch(){
+  getUserFromCatch() {
     var findPredicate = this.getUserFindPredicate();
 
     let usersFromCatchQuery = breeze.EntityQuery
-        .from('Users')
-        .where(findPredicate)
-        .take(1);
+      .from('Users')
+      .where(findPredicate)
+      .take(1);
 
     let usersFromCatch = this._manager.executeQueryLocally(usersFromCatchQuery);
     let userFromCatch = usersFromCatch.length == 1 ? usersFromCatch[0] : null;
@@ -139,13 +164,13 @@ export class HomeBuyersScorecardService {
     return userFromCatch
   }
 
-  createUser(deviceId:string){
+  createUser(deviceId: string) {
     var that = this;
     var userType = this._manager.metadataStore.getEntityType("User");
     //noinspection TypeScriptUnresolvedVariable
     userType.setProperties({ autoGeneratedKeyType: breeze.AutoGeneratedKeyType.Identity });
 
-    let user:User = new User();
+    let user: User = new User();
     user.DeviceId = deviceId;
 
     var userEntity = this._manager.createEntity("User", user);
@@ -164,9 +189,20 @@ export class HomeBuyersScorecardService {
   }
   //</editor-fold>
 
-  getCurrentUser(){
+  getCurrentUser() {
     return this.currentUser;
   }
   //</editor-fold>
+
+  saveHouseListing(houseListing: HouseListing) {
+    let isNew: boolean = typeof (houseListing.Identifier) == "undefined";
+
+    if (isNew) {
+
+    }
+    else {
+
+    }
+  }
 }
 

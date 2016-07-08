@@ -9,7 +9,7 @@
     <ion-title>home-form</ion-title>
   </ion-navbar>
 
-  <ion-toolbar [attr.light]="isAndroid ? '' : null" no-border-top>
+  <ion-toolbar *ngIf="showHomeForm" [attr.light]="isAndroid ? '' : null" no-border-top>
     <ion-segment [(ngModel)]="activeSegment">
       <ion-segment-button value="details">
         Details
@@ -22,7 +22,19 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="homeForm">
+  <div *ngIf="showAddButtons" padding>
+    <p>
+      <button light full>Add by MLS #</button>
+    </p>
+    <p>
+      <button light full>Add by Address</button>
+    </p>
+    <p>
+      <button light full (click)="addManuallyClick()">Add Manually</button>
+    </p>
+  </div>
+
+  <form *ngIf="showHomeForm" [formGroup]="homeForm">
     <div [ngSwitch]="activeSegment">
       <ion-item-group *ngSwitchCase="'details'">
         <ion-item>
@@ -65,7 +77,7 @@
       </ion-item-group>
       <ion-item-group *ngSwitchCase="'scorecard'">
         <ion-item>
-          <ion-label stacked primary>Neighborhood 
+          <ion-label stacked primary>Neighborhood
             <ion-badge *ngIf="homeForm.controls.neighborhood" style="float: right;" favorite>{{homeForm.controls.neighborhood.value}}</ion-badge>
           </ion-label>
           <ion-range #neighborhood formControlName="neighborhood" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
@@ -75,7 +87,7 @@
           </ion-range>
         </ion-item>
         <ion-item>
-          <ion-label stacked primary>Schools 
+          <ion-label stacked primary>Schools
             <ion-badge *ngIf="homeForm.controls.schools" style="float: right;" favorite>{{homeForm.controls.schools.value}}</ion-badge>
           </ion-label>
           <ion-range #schools formControlName="schools" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
@@ -84,7 +96,7 @@
           </ion-range>
         </ion-item>
         <ion-item>
-          <ion-label stacked primary>Layout 
+          <ion-label stacked primary>Layout
             <ion-badge *ngIf="homeForm.controls.layout" style="float: right;" favorite>{{homeForm.controls.layout.value}}</ion-badge>
           </ion-label>
           <ion-range #layout formControlName="layout" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
@@ -93,7 +105,7 @@
           </ion-range>
         </ion-item>
         <ion-item>
-          <ion-label stacked primary>Yard 
+          <ion-label stacked primary>Yard
             <ion-badge *ngIf="homeForm.controls.yard" style="float: right;" favorite>{{homeForm.controls.yard.value}}</ion-badge>
           </ion-label>
           <ion-range #yard formControlName="yard" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
@@ -102,7 +114,7 @@
           </ion-range>
         </ion-item>
         <ion-item>
-          <ion-label stacked primary>Move in Ready 
+          <ion-label stacked primary>Move in Ready
             <ion-badge *ngIf="homeForm.controls.moveInReady" style="float: right;" favorite>{{homeForm.controls.moveInReady.value}}</ion-badge>
           </ion-label>
           <ion-range #moveInReady formControlName="moveInReady" min="0" max="100" pin="true" favorite style="padding-top: 5px;">
@@ -111,7 +123,7 @@
           </ion-range>
         </ion-item>
         <ion-item>
-          <ion-label stacked primary>Gut Feeling 
+          <ion-label stacked primary>Gut Feeling
             <ion-badge *ngIf="homeForm.controls.gutFeeling" style="float: right;" favorite>{{homeForm.controls.gutFeeling.value}}</ion-badge>
           </ion-label>
           <ion-range #gutFeeling formControlName="gutFeeling" min="0" max="100" pin="true" favorite style="padding-top: 5px;">

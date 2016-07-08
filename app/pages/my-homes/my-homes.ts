@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import {User} from "../../models/user";
+import {RedFinResult} from "../../models/redFinResult";
 import {HouseListing} from "../../models/houseListing";
 import {HomeBuyersScorecardService} from '../../providers/home-buyers-scorecard-service/home-buyers-scorecard-service';
 import {HomeFormPage} from '../home-form/home-form';
@@ -17,6 +18,7 @@ import {HomeFormPage} from '../home-form/home-form';
 export class MyHomesPage {
   public currentUser: User;
   emsg: string;
+  addByHouseListing: HouseListing;
 
   constructor(private nav: NavController, private homeBuyersScorecardService: HomeBuyersScorecardService) {
     homeBuyersScorecardService.currentUserSet$.subscribe(cu => this.onCurrentUserSet(cu));
@@ -40,5 +42,16 @@ export class MyHomesPage {
 
   addClick() {
     this.nav.push(HomeFormPage);
+  }
+
+  redFinClick(){
+    this.homeBuyersScorecardService.getDetailsFromRedFinByMlsNumber()
+                   .then(
+                     houseListing => {
+                       this.addByHouseListing = houseListing;
+                       console.log(this.addByHouseListing);
+                       
+                     },
+                     error =>  this.emsg = <any>error);
   }
 }

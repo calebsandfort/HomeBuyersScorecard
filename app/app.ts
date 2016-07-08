@@ -4,6 +4,7 @@ import {StatusBar} from 'ionic-native';
 import {TabsPage} from './pages/tabs/tabs';
 import {HomeBuyersScorecardService} from './providers/home-buyers-scorecard-service/home-buyers-scorecard-service';
 import { disableDeprecatedForms, provideForms } from '@angular/forms';
+import {HTTP_BINDINGS} from '@angular/http';
 
 @Component({
   template: '<ion-nav [root]="rootPage"></ion-nav>',
@@ -34,6 +35,7 @@ export class MyApp {
 }
 
 ionicBootstrap(MyApp, [
+  HTTP_BINDINGS,
   disableDeprecatedForms(),
   provideForms()
  ])
