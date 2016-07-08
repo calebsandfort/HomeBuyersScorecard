@@ -23,6 +23,7 @@ export class HomeFormPage implements OnInit {
   allStates: State[] = STATES;
   showHomeForm:boolean = false;
   showAddButtons:boolean = false;
+  addForm:string = "";
 
   homeForm: FormGroup;
 
@@ -47,6 +48,24 @@ export class HomeFormPage implements OnInit {
       this.showHomeForm = true;
       this.initForm();
     }
+  }
+
+  addByMlsClick = function(){
+    this.addForm = "mls";
+    this.showAddButtons = false;
+
+    // this.homeBuyersScorecardService.getDetailsFromRedFinByMlsNumber()
+    //     .then(
+    //       houseListing => {
+    //         this.addByHouseListing = houseListing;
+    //         console.log(this.addByHouseListing);
+    //       },
+    //       error =>  this.emsg = <any>error);
+  }
+
+  addByAddressClick = function(){
+    this.addForm = "address";
+    this.showAddButtons = false;
   }
 
   addManuallyClick = function(){

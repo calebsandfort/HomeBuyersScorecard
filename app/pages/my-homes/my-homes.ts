@@ -45,13 +45,6 @@ export class MyHomesPage {
   }
 
   redFinClick(){
-    this.homeBuyersScorecardService.getDetailsFromRedFinByMlsNumber()
-                   .then(
-                     houseListing => {
-                       this.addByHouseListing = houseListing;
-                       console.log(this.addByHouseListing);
-                       
-                     },
-                     error =>  this.emsg = <any>error);
+    
   }
 }

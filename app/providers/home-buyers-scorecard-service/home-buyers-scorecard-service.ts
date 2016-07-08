@@ -45,8 +45,8 @@ export class HomeBuyersScorecardService {
   }
   //</editor-fold>
 
-  getDetailsFromRedFinByMlsNumber(): Promise<HouseListing> {
-    return this.http.get("http://dev-csandfort.gwi.com/GuerillaLogisticsApi/api/HouseListingLookup/GetByMls?city=Vancouver&state=47&mls=16233200")
+  getDetailsByMls(city:string, state:number, mls:string): Promise<HouseListing> {
+    return this.http.get("http://10.16.1.142/GuerillaLogisticsApi/api/HouseListingLookup/GetByMls?city=${city}&state=${state}&mls=${mls}")
       .toPromise()
       .then(this.extractData)
       .catch(this.handleError);

@@ -24,10 +24,10 @@
 <ion-content>
   <div *ngIf="showAddButtons" padding>
     <p>
-      <button light full>Add by MLS #</button>
+      <button light full (click)="addByMlsClick()">Add by MLS #</button>
     </p>
     <p>
-      <button light full>Add by Address</button>
+      <button light full (click)="addByAddressClick()">Add by Address</button>
     </p>
     <p>
       <button light full (click)="addManuallyClick()">Add Manually</button>
