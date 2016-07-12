@@ -21,20 +21,19 @@
 
 <ion-content>
   <ion-list *ngIf="currentUser">
-    <button ion-item *ngFor="let houseListing of currentUser.HouseListings" (click)="houseListingClick(houseListing)">
-      {{houseListing.AddressLine1}} {{houseListing.City}} {{houseListing.State}}
-      <ion-icon name="ios-arrow-forward" item-right></ion-icon>
-      <!--<ion-row>
+    <button ion-item *ngFor="let houseListing of currentUser.HouseListings | orderby:'!Score'" (click)="houseListingClick(houseListing)">
+      <ion-row>
         <ion-col width-20 style="padding-top: 0; padding-bottom: 0;">
-          <span primary style="font-size: 2em;">{{round.Score}}</span>
+          <span primary style="font-size: 2em;">{{houseListing.Score}}</span>
         </ion-col>
         <ion-col width-80 style="padding-top: 0; padding-bottom: 0;">
-          <h3>
-            {{round.RatingAndSlope.GolfCourse.Name}}
-          </h3>
-          <p>{{round.Date | date: 'dd/MM/yyyy'}}</p>
+          <h2>{{houseListing | houseListingDisplay}}</h2>
+          <p>
+            {{houseListing.AddressLine1}} {{houseListing.City}} {{houseListing.State}}
+          </p>
         </ion-col>
-      </ion-row>-->
+      </ion-row>
+      <ion-icon name="ios-arrow-forward" item-right></ion-icon>
     </button>
   </ion-list>
   <p *ngIf="emsg" style="color:red">{{emsg}}</p>

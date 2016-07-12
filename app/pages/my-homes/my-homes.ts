@@ -5,6 +5,8 @@ import {RedFinResult} from "../../models/redFinResult";
 import {HouseListing} from "../../models/houseListing";
 import {HomeBuyersScorecardService} from '../../providers/home-buyers-scorecard-service/home-buyers-scorecard-service';
 import {HomeFormPage} from '../home-form/home-form';
+import {HouseListingDisplayPipe} from '../../pipes/house-listing-display-pipe';
+import {OrderByPipe} from '../../pipes/orderby';
 
 /*
   Generated class for the MyHomesPage page.
@@ -14,6 +16,7 @@ import {HomeFormPage} from '../home-form/home-form';
 */
 @Component({
   templateUrl: 'build/pages/my-homes/my-homes.html',
+  pipes: [HouseListingDisplayPipe, OrderByPipe]
 })
 export class MyHomesPage {
   public currentUser: User;
