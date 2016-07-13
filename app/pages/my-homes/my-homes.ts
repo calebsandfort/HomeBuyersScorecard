@@ -50,4 +50,9 @@ export class MyHomesPage {
   redFinClick(){
     
   }
+
+  contextMenuClick(e:MouseEvent, houseListing){
+    e.preventDefault();
+    e.cancelBubble = true;
+  }
 }

@@ -7,6 +7,7 @@ import {State, STATES} from '../../models/state';
 import {Device} from 'ionic-native';
 import { Http, Response } from '@angular/http';
 import 'rxjs/Rx';
+import {OrderByPipe} from '../../pipes/orderby';
 
 declare var breeze: any;
 
@@ -144,6 +145,8 @@ export class HomeBuyersScorecardService {
           });
       }
       else {
+        user.HouseListings = new OrderByPipe().transform(user.HouseListings, '!Score');
+
         that.currentUser = user;
         that.currentUserSet$.emit(that.currentUser);
       }
