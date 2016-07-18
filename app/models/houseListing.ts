@@ -28,6 +28,7 @@ export class HouseListing {
     public Score:number;
 
     public UserIdentifier:number;
+    public FoundDetails:boolean;
 
     constructor() { 
         this.Kitchen = 0;
@@ -40,5 +41,6 @@ export class HouseListing {
         this.FeelsLikeHome = 0;
         this.Yard = 0;
         this.Score = 0;
+        this.FoundDetails = false;
     }
 }

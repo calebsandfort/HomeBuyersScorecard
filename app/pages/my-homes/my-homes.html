@@ -20,7 +20,33 @@
 </ion-header>
 
 <ion-content>
-  <ion-list *ngIf="currentUser">
+  <div *ngIf="currentUser && !currentUser.DefaultsSet">
+    <p padding style="padding-bottom: 0; margin-bottom: 0;">
+      Please enter the city and state you will be evaluating homes in.
+    </p>
+    <form [formGroup]="userDefaultsForm">
+      <ion-item-group>
+        <ion-item>
+          <ion-label floating primary>City</ion-label>
+          <ion-input type="text" #city formControlName="city"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating primary>State</ion-label>
+          <ion-select #state formControlName="state">
+            <ion-option *ngFor="let s of allStates" value="{{ s.Identifier }}">{{ s.Name }}</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-item-group>
+      <div text-center style="padding-top: 5px; padding-bottom: 5px;">
+        <button [disabled]="!userDefaultsForm.valid" (click)="userDefaultsFormSubmit()">Save</button>
+      </div>
+    </form>
+  </div>
+  
+  <ion-list *ngIf="currentUser && currentUser.DefaultsSet">
+    <p *ngIf="currentUser.HouseListings.length == 0" padding>
+      Tap the <ion-icon name="add" style="padding-left: 3px; padding-right: 3px;"></ion-icon> icon in the upper right to add a home.
+    </p>
     <ion-item *ngFor="let houseListing of currentUser.HouseListings" (click)="houseListingClick(houseListing)">
       <ion-row>
         <ion-col width-20 style="padding-top: 0; padding-bottom: 0;">

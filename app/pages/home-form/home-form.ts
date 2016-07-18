@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, Loading } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, ToastController } from 'ionic-angular';
 import {HouseListing} from "../../models/houseListing";
 import {User} from "../../models/user";
 import { REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';
@@ -36,8 +36,12 @@ export class HomeFormPage implements OnInit {
   addByAddressForm: FormGroup;
 
   submitAttempt: boolean = false;
+  loading: any;
 
-  constructor(private nav: NavController, private navParams: NavParams, private formBuilder: FormBuilder, private homeBuyersScorecardService: HomeBuyersScorecardService) {
+  constructor(private nav: NavController, private navParams: NavParams, private formBuilder: FormBuilder,
+    private homeBuyersScorecardService: HomeBuyersScorecardService,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController) {
     this.currentUser = this.homeBuyersScorecardService.getCurrentUser();
   }
 
@@ -69,18 +73,29 @@ export class HomeFormPage implements OnInit {
   }
 
   addByMlsFormSubmit() {
+    this.showLoading();
+
     this.homeBuyersScorecardService.getDetailsByMls(this.addByMlsForm.controls["city"].value, this.addByMlsForm.controls["state"].value, this.addByMlsForm.controls["mls"].value)
       .then(
       houseListing => {
-        this.populateFromFoundListing(houseListing);
+        this.hideLoading();
+        
+        if (houseListing.FoundDetails) {
+          this.populateFromFoundListing(houseListing);
+        }
+        else {
+          this.addForm = '';
+          this.addManuallyClick();
+
+          setTimeout(() => {
+            this.showNotFoundToast();
+          }, 1500);
+        }
       },
-      error => this.emsg = <any>error);
-
-    // this.progressSpinner = new Loading(null, {
-    //   content: "Adding Round..."
-    // });
-
-    //this.nav.present(this.progressSpinner);
+      error => {
+        this.hideLoading();
+        this.emsg = <any>error;
+      });
   }
 
   addByAddressClick = function () {
@@ -99,19 +114,32 @@ export class HomeFormPage implements OnInit {
   }
 
   addByAddressFormSubmit() {
+    this.showLoading();
+
     this.homeBuyersScorecardService.getDetailsByAddress(this.addByAddressForm.controls["addressLine1"].value, this.addByAddressForm.controls["city"].value,
       this.addByAddressForm.controls["state"].value, this.addByAddressForm.controls["zip"].value)
       .then(
       houseListing => {
-        this.populateFromFoundListing(houseListing);
+        this.hideLoading();
+
+        if (houseListing.FoundDetails) {
+          this.populateFromFoundListing(houseListing);
+        }
+        else {
+          this.addForm = '';
+          this.addManuallyClick();
+
+          setTimeout(() => {
+            this.showNotFoundToast();
+          }, 1500);
+        }
+
+        
       },
-      error => this.emsg = <any>error);
-
-    // this.progressSpinner = new Loading(null, {
-    //   content: "Adding Round..."
-    // });
-
-    //this.nav.present(this.progressSpinner);
+      error => {
+        this.hideLoading();
+        this.emsg = <any>error;
+      });
   }
 
   addManuallyClick = function () {
@@ -154,11 +182,13 @@ export class HomeFormPage implements OnInit {
   }
 
   initHomeForm() {
+    let isNew:boolean = typeof(this.houseListing.Identifier) == "undefined";
+
     this.homeForm = this.formBuilder.group({
       nickname: [this.houseListing.Nickname, Validators.compose([Validators.maxLength(20)])],
       addressLine1: [this.houseListing.AddressLine1, Validators.compose([Validators.maxLength(50), Validators.required])],
-      city: [this.houseListing.City, Validators.compose([Validators.maxLength(50), Validators.required])],
-      state: [this.houseListing.StateInt, Validators.compose([MyValidators.noneSelected])],
+      city: [isNew ? this.currentUser.DefaultCity : this.houseListing.City, Validators.compose([Validators.maxLength(50), Validators.required])],
+      state: [isNew ? this.currentUser.DefaultStateInt : this.houseListing.StateInt, Validators.compose([MyValidators.noneSelected])],
       zip: [this.houseListing.Zip, Validators.compose([Validators.pattern('[0-9]{5}'), Validators.maxLength(5), Validators.required])],
       mls: [this.houseListing.Mls],
       price: [this.houseListing.Price, Validators.compose([Validators.required, MyValidators.isPositiveNumber])],
@@ -179,6 +209,8 @@ export class HomeFormPage implements OnInit {
   }
 
   saveHome() {
+    this.showLoading();
+
     this.houseListing.Nickname = this.homeForm.controls["nickname"].value;
     this.houseListing.AddressLine1 = this.homeForm.controls["addressLine1"].value;
     this.houseListing.City = this.homeForm.controls["city"].value;
@@ -203,12 +235,34 @@ export class HomeFormPage implements OnInit {
 
     this.homeBuyersScorecardService.saveHouseListing(this.houseListing)
       .then((result: any) => {
-        //this.progressSpinner.dismiss();
+        this.hideLoading();
         this.nav.popToRoot();
       })
       .catch((emsg: string) => {
-        //this.progressSpinner.dismiss();
+        this.hideLoading();
         this.emsg = emsg;
       });
+  }
+
+  showLoading() {
+    this.loading = this.loadingCtrl.create({
+      content: 'Please wait...'
+    });
+
+    this.loading.present();
+  }
+
+  hideLoading() {
+    this.loading.dismiss();
+  }
+
+  showNotFoundToast() {
+    let toast = this.toastCtrl.create({
+      message: 'Unable to find listing. Add manually.',
+      duration: 3000,
+      position: 'top'
+    });
+
+    toast.present();
   }
 }

@@ -7,6 +7,7 @@ export class User {
     public DefaultCity:string;
     public DefaultState:string;
     public DefaultStateInt:number;
+    public DefaultsSet:boolean;
     public HouseListings:HouseListing[];
 
     constructor() { }
